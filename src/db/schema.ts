@@ -1,42 +1,28 @@
-import { sqliteTable, integer, text } from 'drizzle-orm/sqlite-core'
-import { sql } from 'drizzle-orm'
+import { pgTable, serial, integer, text, timestamp } from 'drizzle-orm/pg-core'
 
-export const albums = sqliteTable('albums', {
-  id: integer({ mode: 'number' }).primaryKey({
-    autoIncrement: true,
-  }),
-  title: text().notNull(),
-  description: text(),
+export const albums = pgTable('albums', {
+  id: serial('id').primaryKey(),
+  title: text('title').notNull(),
+  description: text('description'),
   coverUrl: text('cover_url'),
-  createdAt: integer('created_at', { mode: 'timestamp' }).default(
-    sql`(unixepoch())`,
-  ),
+  createdAt: timestamp('created_at').defaultNow(),
 })
 
-export const photos = sqliteTable('photos', {
-  id: integer({ mode: 'number' }).primaryKey({
-    autoIncrement: true,
-  }),
+export const photos = pgTable('photos', {
+  id: serial('id').primaryKey(),
   name: text('name'),
-  url: text().notNull(),
+  url: text('url').notNull(),
   vercelBlobUrl: text('vercel_blob_url'),
-  createdAt: integer('created_at', { mode: 'timestamp' }).default(
-    sql`(unixepoch())`,
-  ),
+  createdAt: timestamp('created_at').defaultNow(),
 })
 
-export const albumPhotos = sqliteTable('album_photos', {
-  id: integer({ mode: 'number' }).primaryKey({
-    autoIncrement: true,
-  }),
+export const albumPhotos = pgTable('album_photos', {
+  id: serial('id').primaryKey(),
   albumId: integer('album_id')
     .notNull()
     .references(() => albums.id, { onDelete: 'cascade' }),
   photoId: integer('photo_id')
     .notNull()
     .references(() => photos.id, { onDelete: 'cascade' }),
-  createdAt: integer('created_at', { mode: 'timestamp' }).default(
-    sql`(unixepoch())`,
-  ),
+  createdAt: timestamp('created_at').defaultNow(),
 })
-

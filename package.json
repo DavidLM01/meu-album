@@ -17,13 +17,14 @@
     "db:studio": "drizzle-kit studio"
   },
   "dependencies": {
-    "@libsql/client": "^0.17.4",
+    "@sqlitecloud/drivers": "^1.0.880",
     "@tailwindcss/vite": "^4.1.18",
     "@tanstack/react-devtools": "latest",
     "@tanstack/react-router": "latest",
     "@tanstack/react-router-devtools": "latest",
     "@tanstack/react-start": "latest",
     "@vercel/blob": "^2.8.0",
+    "@vercel/postgres": "^0.10.0",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "drizzle-kit": "^0.31.9",
