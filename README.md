@@ -8,7 +8,7 @@ O projeto foi construído utilizando as tecnologias mais modernas do ecossistema
 
 - **Framework:** [TanStack Start](https://tanstack.com/start) e [React 19](https://react.dev/) (Roteamento baseado em arquivos com SSR/SSG).
 - **Estilização:** [Tailwind CSS v4](https://tailwindcss.com/) com design system UI através do [Radix UI](https://www.radix-ui.com/) e animações com [Framer Motion](https://www.framer.com/motion/).
-- **Banco de Dados & ORM:** [Drizzle ORM](https://orm.drizzle.team/) com SQLite local (`@libsql/client`).
+- **Banco de Dados & ORM:** [Drizzle ORM](https://orm.drizzle.team/) com Vercel Postgres (`@vercel/postgres`).
 - **Armazenamento de Mídia:** [Vercel Blob](https://vercel.com/docs/storage/vercel-blob) para upload de fotos seguro na nuvem.
 - **PWA:** Suporte a Progressive Web App via `vite-plugin-pwa`, permitindo instalação nativa no dispositivo.
 - **Servidor:** Vite com adaptador Nitro para alta performance.
@@ -31,7 +31,7 @@ meu-album/
 │   ├── routes/             # Páginas da aplicação e Server Functions (Roteamento)
 │   ├── styles.css          # CSS global e declaração de tokens do Tailwind
 │   └── ...
-├── dev.db                  # Banco de Dados local SQLite
+├── drizzle/                # Arquivos de migração do Drizzle
 ├── drizzle.config.ts       # Configurações do Drizzle ORM
 ├── vite.config.ts          # Configurações do Vite (incluindo PWA)
 └── package.json            # Dependências e scripts
@@ -47,8 +47,8 @@ O projeto requer algumas variáveis de ambiente para funcionar corretamente (esp
 2. Você pode basear-se no `.env.example` fornecido:
 
 ```env
-# Banco de Dados
-DATABASE_URL="file:dev.db"
+# Banco de Dados (Vercel Postgres)
+POSTGRES_URL="postgres://user:password@host/database"
 
 # Upload Vercel Blob (Adicione seu Token de leitura/escrita)
 BLOB_READ_WRITE_TOKEN="seu_token_da_vercel_blob_aqui"
