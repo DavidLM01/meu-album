@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from '@tanstack/react-router'
 import { getAlbums, getPhotosByAlbumId, getAllPhotos } from '../features/albums/albums.ts'
-import { Images, Search } from 'lucide-react'
+import { Search } from 'lucide-react'
 import { useState, useEffect } from 'react'
 import { useServerFn } from '@tanstack/react-start'
 
@@ -128,7 +128,7 @@ function Home() {
 
       {/* Footer */}
       <footer className="border-t border-white/10 py-12 text-center text-neutral-500 text-sm">
-        <p>&copy; {new Date().getFullYear()} Meu Álbum. Todos os direitos reservados.</p>
+        <p>&copy; {new Date().getFullYear()} {import.meta.env.VITE_APP_NAME || 'Meu Álbum'}. Todos os direitos reservados.</p>
         <Link to="/admin" className="hover:text-white transition mt-4 inline-block">Área Restrita</Link>
       </footer>
     </div>

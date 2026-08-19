@@ -21,7 +21,7 @@ export const Route = createRootRoute({
         content: '#000000',
       },
       {
-        title: 'Meu Álbum',
+        title: import.meta.env.VITE_APP_NAME || 'Meu Álbum',
       },
     ],
     links: [
@@ -31,7 +31,7 @@ export const Route = createRootRoute({
       },
       {
         rel: 'apple-touch-icon',
-        href: '/pwa-192x192.svg',
+        href: '/logo.ico',
       },
       {
         rel: 'icon',
