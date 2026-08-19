@@ -18,7 +18,7 @@ function Home() {
 
   const filteredAlbums = albums.filter(album => {
     const query = searchQuery.toLowerCase()
-    return album.title.toLowerCase().includes(query) || 
+    return album.title.toLowerCase().includes(query) ||
       (album.description && album.description.toLowerCase().includes(query))
   })
 
@@ -42,7 +42,7 @@ function Home() {
             Momentos Inesquecíveis
           </h1>
           <p className="text-xl text-neutral-300 font-light max-w-2xl mx-auto mb-10 drop-shadow-lg">
-            Uma coleção das minhas memórias de formatura.
+            Uma coleção das minhas memórias.
           </p>
 
           <a
@@ -56,7 +56,7 @@ function Home() {
 
       {/* Albums Grid */}
       <div id="albums" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 pb-32">
-        
+
         {/* Search Bar */}
         <div className="mb-12 max-w-xl mx-auto relative z-10">
           <div className="relative group">
@@ -111,13 +111,13 @@ function Home() {
               </div>
             </Link>
           ))}
-          
+
           {filteredAlbums.length === 0 && albums.length > 0 && (
             <div className="col-span-full text-center text-neutral-500 py-20 border border-white/10 rounded-2xl glass-panel">
               Nenhum álbum encontrado para a busca "{searchQuery}".
             </div>
           )}
-          
+
           {albums.length === 0 && (
             <div className="col-span-full text-center text-neutral-500 py-20 border border-white/10 rounded-2xl glass-panel">
               Nenhum álbum foi publicado ainda.
@@ -139,12 +139,12 @@ function AlbumCover({ albumId, fallbackUrl }: { albumId: number, fallbackUrl?: s
   const [photos, setPhotos] = useState<string[]>([])
   const [currentIdx, setCurrentIdx] = useState(0)
   const getPhotos = useServerFn(getPhotosByAlbumId)
-  
+
   useEffect(() => {
     getPhotos({ data: albumId }).then(res => {
-       if (res.length > 0) {
-          setPhotos(res.map(r => r.url).sort(() => Math.random() - 0.5))
-       }
+      if (res.length > 0) {
+        setPhotos(res.map(r => r.url).sort(() => Math.random() - 0.5))
+      }
     })
   }, [albumId, getPhotos])
 
@@ -172,12 +172,12 @@ function AllPhotosCover() {
   const [photos, setPhotos] = useState<string[]>([])
   const [currentIdx, setCurrentIdx] = useState(0)
   const getPhotos = useServerFn(getAllPhotos)
-  
+
   useEffect(() => {
     getPhotos().then(res => {
-       if (res.length > 0) {
-          setPhotos(res.map(r => r.url).sort(() => Math.random() - 0.5))
-       }
+      if (res.length > 0) {
+        setPhotos(res.map(r => r.url).sort(() => Math.random() - 0.5))
+      }
     })
   }, [getPhotos])
 
@@ -185,7 +185,7 @@ function AllPhotosCover() {
     if (photos.length <= 1) return
     const interval = setInterval(() => {
       setCurrentIdx(prev => (prev + 1) % photos.length)
-    }, 6000) 
+    }, 6000)
     return () => clearInterval(interval)
   }, [photos])
 
@@ -193,10 +193,10 @@ function AllPhotosCover() {
 
   return (
     <>
-       {url && (
-          <img src={url} className="absolute inset-0 w-full h-full object-cover opacity-60 group-hover:opacity-80 group-hover:scale-105 transition-all duration-1000" />
-       )}
-       <div className="absolute inset-0 bg-gradient-to-t from-[#000D1A]/80 via-[#000D1A]/20 to-transparent z-0" />
+      {url && (
+        <img src={url} className="absolute inset-0 w-full h-full object-cover opacity-60 group-hover:opacity-80 group-hover:scale-105 transition-all duration-1000" />
+      )}
+      <div className="absolute inset-0 bg-gradient-to-t from-[#000D1A]/80 via-[#000D1A]/20 to-transparent z-0" />
     </>
   )
 }
