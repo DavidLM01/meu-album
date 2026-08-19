@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from '@tanstack/react-router'
 import { getAlbums, getPhotosByAlbumId, getAllPhotos } from '../features/albums/albums.ts'
-import { Images } from 'lucide-react'
+import { Images, Search } from 'lucide-react'
 import { useState, useEffect } from 'react'
 import { useServerFn } from '@tanstack/react-start'
 
@@ -14,6 +14,13 @@ export const Route = createFileRoute('/')({
 
 function Home() {
   const { albums } = Route.useLoaderData()
+  const [searchQuery, setSearchQuery] = useState('')
+
+  const filteredAlbums = albums.filter(album => {
+    const query = searchQuery.toLowerCase()
+    return album.title.toLowerCase().includes(query) || 
+      (album.description && album.description.toLowerCase().includes(query))
+  })
 
   return (
     <div className="min-h-screen bg-[#000D1A] text-white selection:bg-[#D4AF37]/30">
@@ -49,25 +56,44 @@ function Home() {
 
       {/* Albums Grid */}
       <div id="albums" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 pb-32">
+        
+        {/* Search Bar */}
+        <div className="mb-12 max-w-xl mx-auto relative z-10">
+          <div className="relative group">
+            <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+              <Search className="h-5 w-5 text-neutral-400 group-focus-within:text-[#D4AF37] transition-colors" />
+            </div>
+            <input
+              type="text"
+              placeholder="Buscar álbuns por título ou descrição..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full pl-12 pr-4 py-4 bg-white/5 border border-white/10 rounded-full text-white placeholder-neutral-500 focus:outline-none focus:ring-2 focus:ring-[#D4AF37]/50 focus:border-transparent transition-all backdrop-blur-md"
+            />
+          </div>
+        </div>
+
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
 
           {/* Card Todas as Fotos */}
-          <Link
-            to="/photos"
-            className="group relative block rounded-2xl overflow-hidden aspect-[4/5] glass-panel border border-white/10 hover:border-white/30 transition-all duration-500 hover:-translate-y-2 shadow-2xl flex flex-col items-center justify-center bg-gradient-to-br from-white/5 to-white/10"
-          >
-            <AllPhotosCover />
-            <div className="absolute bottom-0 left-0 right-0 p-8 transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500 z-10">
-              <h3 className="text-2xl font-bold text-white mb-2 tracking-tight">
-                Todas as Fotos
-              </h3>
-              <p className="text-neutral-300 text-sm opacity-0 group-hover:opacity-100 transition-opacity duration-500 delay-100">
-                Ver todo o acervo de memórias
-              </p>
-            </div>
-          </Link>
+          {!searchQuery && (
+            <Link
+              to="/photos"
+              className="group relative block rounded-2xl overflow-hidden aspect-[4/5] glass-panel border border-white/10 hover:border-white/30 transition-all duration-500 hover:-translate-y-2 shadow-2xl flex flex-col items-center justify-center bg-gradient-to-br from-white/5 to-white/10"
+            >
+              <AllPhotosCover />
+              <div className="absolute bottom-0 left-0 right-0 p-8 transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500 z-10">
+                <h3 className="text-2xl font-bold text-white mb-2 tracking-tight">
+                  Todas as Fotos
+                </h3>
+                <p className="text-neutral-300 text-sm opacity-0 group-hover:opacity-100 transition-opacity duration-500 delay-100">
+                  Ver todo o acervo de memórias
+                </p>
+              </div>
+            </Link>
+          )}
 
-          {albums.map((album) => (
+          {filteredAlbums.map((album) => (
             <Link
               key={album.id}
               to={`/album/${album.id}`}
@@ -85,6 +111,13 @@ function Home() {
               </div>
             </Link>
           ))}
+          
+          {filteredAlbums.length === 0 && albums.length > 0 && (
+            <div className="col-span-full text-center text-neutral-500 py-20 border border-white/10 rounded-2xl glass-panel">
+              Nenhum álbum encontrado para a busca "{searchQuery}".
+            </div>
+          )}
+          
           {albums.length === 0 && (
             <div className="col-span-full text-center text-neutral-500 py-20 border border-white/10 rounded-2xl glass-panel">
               Nenhum álbum foi publicado ainda.
