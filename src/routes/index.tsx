@@ -15,8 +15,13 @@ export const Route = createFileRoute('/')({
 function Home() {
   const { albums } = Route.useLoaderData()
   const [searchQuery, setSearchQuery] = useState('')
+  const [shuffledAlbums, setShuffledAlbums] = useState(albums)
 
-  const filteredAlbums = albums.filter(album => {
+  useEffect(() => {
+    setShuffledAlbums([...albums].sort(() => Math.random() - 0.5))
+  }, [albums])
+
+  const filteredAlbums = shuffledAlbums.filter(album => {
     const query = searchQuery.toLowerCase()
     return album.title.toLowerCase().includes(query) ||
       (album.description && album.description.toLowerCase().includes(query))

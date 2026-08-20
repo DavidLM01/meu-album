@@ -1,8 +1,8 @@
 import { createFileRoute, useNavigate, Link } from '@tanstack/react-router'
 import { getPhotosByAlbumId, getAllPhotos } from '../../features/albums/albums.ts'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { Button } from '../../components/ui/button'
-import { ArrowLeft, ChevronLeft, ChevronRight, Pause, Play } from 'lucide-react'
+import { ArrowLeft, ChevronLeft, ChevronRight, Pause, Play, X } from 'lucide-react'
 
 export const Route = createFileRoute('/slideshow/$albumId')({
   loader: async ({ params }) => {
@@ -23,6 +23,10 @@ function Slideshow() {
   const [isAutoPlaying, setIsAutoPlaying] = useState(true)
   const navigate = useNavigate()
 
+  const touchStartX = useRef<number | null>(null)
+  const touchEndX = useRef<number | null>(null)
+  const minSwipeDistance = 50
+
   useEffect(() => {
     if (photos.length <= 1 || !isAutoPlaying) return
 
@@ -41,6 +45,25 @@ function Slideshow() {
   const handleNext = () => {
     setIsAutoPlaying(false)
     setCurrentIndex((prev) => (prev + 1) % photos.length)
+  }
+
+  const onTouchStart = (e: React.TouchEvent) => {
+    touchEndX.current = null
+    touchStartX.current = e.targetTouches[0].clientX
+  }
+
+  const onTouchMove = (e: React.TouchEvent) => {
+    touchEndX.current = e.targetTouches[0].clientX
+  }
+
+  const onTouchEnd = () => {
+    if (!touchStartX.current || !touchEndX.current) return
+    const distance = touchStartX.current - touchEndX.current
+    const isLeftSwipe = distance > minSwipeDistance
+    const isRightSwipe = distance < -minSwipeDistance
+
+    if (isLeftSwipe) handleNext()
+    if (isRightSwipe) handlePrev()
   }
 
   const { albumId } = Route.useParams()
@@ -65,7 +88,12 @@ function Slideshow() {
   }
 
   return (
-    <div className="min-h-screen bg-[#000D1A] overflow-hidden relative group">
+    <div 
+      className="min-h-screen bg-[#000D1A] overflow-hidden relative group"
+      onTouchStart={onTouchStart}
+      onTouchMove={onTouchMove}
+      onTouchEnd={onTouchEnd}
+    >
       {/* Photos */}
       {photos.map((photo, index) => (
         <img
@@ -78,19 +106,19 @@ function Slideshow() {
         />
       ))}
 
-      {/* Controls Overlay (appears on hover) */}
-      <div className="absolute top-0 left-0 right-0 p-6 z-50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-gradient-to-b from-[#000D1A]/80 to-transparent flex justify-between items-center">
-        <Link to={Route.useParams().albumId === 'all' ? '/photos' : `/album/${Route.useParams().albumId}`}>
-          <Button variant="ghost" className="text-white hover:text-white hover:bg-white/10 rounded-full pl-2">
-            <ArrowLeft className="w-4 h-4 mr-2" />
-            Voltar
-          </Button>
+      {/* Controls Overlay (always visible on mobile, hover on desktop) */}
+      <div className="absolute inset-0 pointer-events-none z-50 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity duration-300">
+        {/* Close button (top right, identical to lightbox) */}
+        <Link 
+          to={albumId === 'all' ? '/photos' : `/album/${albumId}`}
+          className="absolute top-4 right-4 sm:top-6 sm:right-6 p-2 rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors pointer-events-auto"
+        >
+          <X className="w-6 h-6" />
         </Link>
-        <p className="text-white font-medium">Modo TV (Pressione ESC para sair)</p>
       </div>
 
       {/* Player Controls */}
-      <div className="absolute bottom-12 left-1/2 -translate-x-1/2 z-50 flex gap-4 items-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+      <div className="absolute bottom-12 left-1/2 -translate-x-1/2 z-50 hidden sm:flex gap-4 items-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
         <Button variant="outline" size="icon" className="rounded-full bg-black/50 border-white/20 text-white hover:bg-white/20" onClick={handlePrev}>
           <ChevronLeft className="w-6 h-6" />
         </Button>
@@ -103,12 +131,12 @@ function Slideshow() {
       </div>
 
       {/* Progress Indicators */}
-      <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-50 flex gap-2">
+      <div className="absolute bottom-4 sm:bottom-6 left-1/2 -translate-x-1/2 z-50 flex gap-1 sm:gap-2 max-w-[90%] overflow-hidden">
         {photos.map((_, index) => (
           <div
             key={index}
-            className={`h-1.5 rounded-full transition-all duration-300 ${
-              index === currentIndex ? 'w-8 bg-white' : 'w-2 bg-white/30'
+            className={`h-1 sm:h-1.5 rounded-full transition-all duration-300 flex-shrink-0 ${
+              index === currentIndex ? 'w-4 sm:w-8 bg-white' : 'w-1 sm:w-2 bg-white/30'
             }`}
           />
         ))}
