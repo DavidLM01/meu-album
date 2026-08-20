@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from '@tanstack/react-router'
 import { getAlbums, getPhotosByAlbumId, getAllPhotos } from '../features/albums/albums.ts'
-import { Search } from 'lucide-react'
+import { Search, Image as ImageIcon } from 'lucide-react'
 import { useState, useEffect } from 'react'
 import { useServerFn } from '@tanstack/react-start'
 
@@ -165,11 +165,19 @@ function AlbumCover({ albumId, fallbackUrl }: { albumId: number, fallbackUrl?: s
   if (!url) return null
 
   return (
-    <img
-      src={url}
-      alt=""
-      className="absolute inset-0 w-full h-full object-cover opacity-80 group-hover:opacity-100 group-hover:scale-105 transition-all duration-1000"
-    />
+    <>
+      <img
+        src={url}
+        alt=""
+        className="absolute inset-0 w-full h-full object-cover opacity-80 group-hover:opacity-100 group-hover:scale-105 transition-all duration-1000"
+      />
+      {photos.length > 0 && (
+        <div className="absolute top-4 right-4 z-20 bg-black/40 backdrop-blur-md border border-white/20 text-white text-xs sm:text-sm font-medium px-3 py-1.5 rounded-full flex items-center gap-1.5 shadow-lg group-hover:bg-[#D4AF37]/90 group-hover:border-[#D4AF37] group-hover:text-[#000D1A] transition-all duration-500">
+          <ImageIcon className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+          <span>{photos.length} {photos.length === 1 ? 'foto' : 'fotos'}</span>
+        </div>
+      )}
+    </>
   )
 }
 
@@ -202,6 +210,12 @@ function AllPhotosCover() {
         <img src={url} className="absolute inset-0 w-full h-full object-cover opacity-60 group-hover:opacity-80 group-hover:scale-105 transition-all duration-1000" />
       )}
       <div className="absolute inset-0 bg-gradient-to-t from-[#000D1A]/80 via-[#000D1A]/20 to-transparent z-0" />
+      {photos.length > 0 && (
+        <div className="absolute top-4 right-4 z-20 bg-black/40 backdrop-blur-md border border-white/20 text-white text-xs sm:text-sm font-medium px-3 py-1.5 rounded-full flex items-center gap-1.5 shadow-lg group-hover:bg-[#D4AF37]/90 group-hover:border-[#D4AF37] group-hover:text-[#000D1A] transition-all duration-500">
+          <ImageIcon className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+          <span>{photos.length} {photos.length === 1 ? 'foto' : 'fotos'}</span>
+        </div>
+      )}
     </>
   )
 }
